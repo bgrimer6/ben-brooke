@@ -4,23 +4,85 @@ author: "Brooke Helmick"
 format: html
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+## Exercise: Explore, Clean, and Wrangle Data
 
 ```{r}
-1 + 1
+#| warning: false 
+#| message: false 
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(here)
+library(janitor)
 ```
-
-You can add options to executable code like this 
 
 ```{r}
-#| echo: false
-2 * 2
+lobster_traps <- read_csv(here::here("data/Lobster_Trap_Counts_All_Years_20210519.csv")) %>% 
+  janitor::clean_names()
+
+colnames(lobster_traps)
+summary(lobster_traps)
+head(lobster_traps)
+unique(lobster_traps$year)
+
+lobster_traps <- lobster_traps %>% 
+    mutate(traps = na_if(traps, -99999))
+
+unique(lobster_traps$traps)
+
+not_napl <- lobster_traps %>% 
+    filter(site != "napl")
+
+carp_20_traps <- lobster_traps %>% 
+  filter (site != "carp" & traps > 20)
+
+colnames(lobster_traps)
+head(lobster_traps)
+unique(lobster_traps$site)
+
+max(lobster_traps)
+
+max(lobster_traps$traps)
+
+range(lobster_traps$traps, na.rm = TRUE)
+
+head(lobster_traps$traps)
+
+lobster_traps_sm <- lobster_traps %>%
+  select(traps, site, month)
+
+carp_20_traps <- lobster_traps %>% 
+  filter (site == "carp" & traps > 20)  
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+## Data Visualization 
+
+```{r}
+ggplot(data = lobster_traps, aes(x = traps)) +
+    geom_histogram(bins = 30) +
+    facet_wrap( ~ year)
+
+unique(lobster_traps$traps)
+
+lobster_traps_summarize <- lobster_traps %>% 
+  group_by(site, year) %>% 
+  summarize(total_traps = sum(traps, na.rm = TRUE))
+
+ggplot(data = lobster_traps_summarize, aes(x = year, y = total_traps))+
+  geom_point(aes(color = site)) +
+  geom_line(aes(color = site))
+```
+```{r}
+lobster_traps_fishing_pressure <- lobster_traps %>%
+  filter(year %in% c(2019, 2020, 2021)) %>% 
+  mutate(fishing_pressure = if_else(traps >=8, true = "high", false = "low")) %>% 
+  group_by(site, fishing_pressure) %>% 
+  summarize(count = n()) %>%
+  drop_na()
+
+ggplot(data = lobster_traps_fishing_pressure, aes(x=site, y = count, fill = fishing_pressure)) +
+  geom_col(position = "dodge")
+```
+
+
