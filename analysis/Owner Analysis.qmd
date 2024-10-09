@@ -1,26 +1,42 @@
 ---
 title: "Owner Analysis"
-author: "Brooke Helmick"
+author: "Brooke Helmick" and "Ben Grime
 format: html
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
+## Exercise: Explore, Clean, and Wrangle Data
 ```{r}
-1 + 1
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(here)
 ```
 
-You can add options to executable code like this 
 
+## Read in the data and store as lobster abundance
 ```{r}
-#| echo: false
-2 * 2
+lobster_abundance <- read_csv(here::here("data/Lobster_Abundance_All_Years_20220829.csv"))
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+
+## Explore the data
+```{r}
+glimpse(lobster_abundance)
+head(lobster_abundance)
+colnames(lobster_abundance)
+unique(lobster_abundance$SITE)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
