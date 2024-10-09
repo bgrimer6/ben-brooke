@@ -11,6 +11,7 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(here)
+library(janitor)
 ```
 
 
@@ -29,9 +30,51 @@ unique(lobster_abundance$SITE)
 
 ```
 
+## Clean and Reshape the Data
+
+### Get the data ready for cleaning
+```{r}
+lobster_abundance <- lobster_abundance %>% 
+  janitor::clean_names()
+
+colnames(lobster_abundance)
+```
 
 
+### Convert missing values using 'mutate()' and 'na.if()'
+```{r}
+lobster_abundance <- lobster_abundance %>% 
+  mutate(size_mm = na_if(size_mm, -99999))
 
+head(lobster_abundance)
+```
+
+### 'filter()' practice
+```{r}
+not_napl <- lobster_abundance %>% 
+  filter(site != "NAPL")
+
+unique(not_napl$site)
+```
+
+
+### Create and store a subset of lobsters at Arroy Quemado (AQUE) AND with a carapace length greater than 70 mm
+```{r}
+aque_70mm <- lobster_abundance %>% 
+  filter(site == "AQUE" & size_mm >= 70)
+
+summary(aque_70mm$size_mm)
+```
+
+
+### find maximum carapace length using 'max()' and group by site and month. ?max
+```{r}
+max_lobster <- lobster_abundance %>% 
+  group_by(site, month) %>% 
+  summarize(max_length = max(size_mm, na.rm = TRUE))
+
+max_lobster
+```
 
 
 
