@@ -82,7 +82,18 @@ lobster_traps_fishing_pressure <- lobster_traps %>%
   drop_na()
 
 ggplot(data = lobster_traps_fishing_pressure, aes(x=site, y = count, fill = fishing_pressure)) +
-  geom_col(position = "dodge")
+  geom_col(position = "dodge") + 
+  labs( 
+    x = "Site",
+    y = "Count",
+    title = "Fishing Pressure", 
+    fill = "Fishing Pressure") +
+  theme(legend.title = "Fishing Pressure") + 
+  theme(legend.position = "bottom") + 
+  coord_flip() + 
+  scale_y_continuous(breaks = seq(0,700, 100), expand = c(0,0)) + 
+  theme_light()
+
 ```
 
 
